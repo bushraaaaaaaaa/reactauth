@@ -1,0 +1,97 @@
+import React from 'react';
+import {
+  MDBBtn,
+  MDBContainer,
+  MDBCard,
+  MDBCardBody,
+  MDBCardImage,
+  MDBRow,
+  MDBCol,
+  MDBIcon,
+  MDBInput
+}
+from 'mdb-react-ui-kit';
+import {useState} from "react";
+import { Link,useNavigate } from 'react-router-dom';
+import { auth } from '../../../firebase';
+import { createUserWithEmailAndPassword,getAuth } from 'firebase/auth';
+function Signup() {
+  const naviage=useNavigate();
+  console.log(auth);
+    const [values,setvalues]=useState({
+        name:"",
+        pass:"",
+        email:"",
+        c_no:""
+    })
+    const[errorM,seterrorM]=useState("");
+    const handle_submit=()=>{
+      const { email, pass, name, c_no } = values;
+      if(email || name || pass || c_no){
+seterrorM("fill all fields")
+return;
+      }
+      seterrorM("")
+
+      createUserWithEmailAndPassword(auth, email, pass, name, c_no)
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log('user', user);
+          // ...
+          naviage("/")
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log('errorMessage', errorMessage);
+          // ..
+        });
+    }
+
+  return (
+    <MDBContainer className="my-5">
+
+      <MDBCard >
+        <MDBRow className='g-0'>
+
+        <MDBCol md='6' style={{ backgroundColor: '#de7728' }}>
+        <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+  <iframe src="https://giphy.com/embed/EddY9gk1YkWAnImfKm" width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} frameBorder="0" className="giphy-embed" allowFullScreen></iframe>
+</div>
+
+
+
+
+</MDBCol>
+
+
+
+          <MDBCol md='6'>
+            <MDBCardBody className='d-flex flex-column' >
+
+              <div className='d-flex flex-row mt-2'>
+                <MDBIcon fas icon="cubes fa-3x me-3" style={{ color: '#040040' }}/>
+              </div>
+
+              <h5 className="fw-normal my-4 pb-3" style={{letterSpacing: '1px'}}>Sign into your account</h5>
+              <MDBInput wrapperClass='mb-4' label='Name' id='formControlLg' type='text' size="lg"  onChange={(event)=>(setvalues((prev)=>({...prev,name:event.target.value})))}/>
+              <MDBInput wrapperClass='mb-4' label='Contact Number' id='formControlLg' type='text' size="lg"onChange={(event)=>(setvalues((prev)=>({...prev,c_no:event.target.value})))}/>
+                <MDBInput wrapperClass='mb-4' label='Email address' id='formControlLg' type='email' size="lg"onChange={(event)=>(setvalues((prev)=>({...prev,email:event.target.value})))}/>
+
+                <MDBInput wrapperClass='mb-4' label='Password' id='formControlLg' type='password' size="lg" onChange={(event)=>(setvalues((prev)=>({...prev,pass:event.target.value})))}/>
+<b>{errorM}</b>
+              <MDBBtn onClick={handle_submit} className="mb-4 px-5" color='dark' size='lg'>Signup</MDBBtn>
+              <p className="mb-5 pb-lg-2" style={{color: '#393f81'}}>already have an acount? <Link to="/" style={{color: '#393f81'}}>Login</Link></p>
+
+            </MDBCardBody>
+          </MDBCol>
+
+        </MDBRow>
+      </MDBCard>
+
+    </MDBContainer>
+  );
+}
+
+export default Signup;
